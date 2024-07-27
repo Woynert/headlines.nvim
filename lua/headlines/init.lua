@@ -16,181 +16,52 @@ local parse_query_save = function(language, query)
 end
 
 M.config = {
-    markdown = {
-        query = parse_query_save(
-            "markdown",
-            [[
-                (atx_heading [
-                    (atx_h1_marker)
-                    (atx_h2_marker)
-                    (atx_h3_marker)
-                    (atx_h4_marker)
-                    (atx_h5_marker)
-                    (atx_h6_marker)
-                ] @headline)
+    query = parse_query_save(
+        "markdown",
+        [[
+            ((atx_heading
+              (atx_h1_marker) @headline1
+              (_) @1_heading_content))
+            ((atx_heading
+              (atx_h2_marker) @headline2
+              (_) @2_heading_content))
+            ((atx_heading
+              (atx_h3_marker) @headline3
+              (_) @3_heading_content))
+            ((atx_heading
+              (atx_h4_marker) @headline4
+              (_) @4_heading_content))
+            ((atx_heading
+              (atx_h5_marker) @headline5
+              (_) @5_heading_content))
+            ((atx_heading
+              (atx_h6_marker) @headline6
+              (_) @6_heading_content))
 
-                (thematic_break) @dash
+            (thematic_break) @dash
 
-                (fenced_code_block) @codeblock
+            (fenced_code_block) @codeblock
 
-                (block_quote_marker) @quote
-                (block_quote (paragraph (inline (block_continuation) @quote)))
-                (block_quote (paragraph (block_continuation) @quote))
-                (block_quote (block_continuation) @quote)
-            ]]
-        ),
-        headline_highlights = { "Headline" },
-        bullet_highlights = {
-            "@text.title.1.marker.markdown",
-            "@text.title.2.marker.markdown",
-            "@text.title.3.marker.markdown",
-            "@text.title.4.marker.markdown",
-            "@text.title.5.marker.markdown",
-            "@text.title.6.marker.markdown",
-        },
-        bullets = { "◉", "○", "✸", "✿" },
-        codeblock_highlight = "CodeBlock",
-        dash_highlight = "Dash",
-        dash_string = "-",
-        quote_highlight = "Quote",
-        quote_string = "┃",
-        fat_headlines = true,
-        fat_headline_upper_string = "▃",
-        fat_headline_lower_string = "🬂",
-    },
-    rmd = {
-        query = parse_query_save(
-            "markdown",
-            [[
-                (atx_heading [
-                    (atx_h1_marker)
-                    (atx_h2_marker)
-                    (atx_h3_marker)
-                    (atx_h4_marker)
-                    (atx_h5_marker)
-                    (atx_h6_marker)
-                ] @headline)
+            (block_quote_marker) @quote
+            (block_quote (paragraph (inline (block_continuation) @quote)))
+            (block_quote (paragraph (block_continuation) @quote))
+            (block_quote (block_continuation) @quote)
+        ]]
+    ),
+    headline_symbol = "»",
+    headline_dash_symbol = "—",
+    headline_dash_highlight = "Dash",
 
-                (thematic_break) @dash
+    dash_symbol = "-",
+    dash_highlight = "Dash",
 
-                (fenced_code_block) @codeblock
-
-                (block_quote_marker) @quote
-                (block_quote (paragraph (inline (block_continuation) @quote)))
-                (block_quote (paragraph (block_continuation) @quote))
-                (block_quote (block_continuation) @quote)
-            ]]
-        ),
-        treesitter_language = "markdown",
-        headline_highlights = { "Headline" },
-        bullet_highlights = {
-            "@text.title.1.marker.markdown",
-            "@text.title.2.marker.markdown",
-            "@text.title.3.marker.markdown",
-            "@text.title.4.marker.markdown",
-            "@text.title.5.marker.markdown",
-            "@text.title.6.marker.markdown",
-        },
-        bullets = { "◉", "○", "✸", "✿" },
-        codeblock_highlight = "CodeBlock",
-        dash_highlight = "Dash",
-        dash_string = "-",
-        quote_highlight = "Quote",
-        quote_string = "┃",
-        fat_headlines = true,
-        fat_headline_upper_string = "▃",
-        fat_headline_lower_string = "🬂",
-    },
-    norg = {
-        query = parse_query_save(
-            "norg",
-            [[
-                [
-                    (heading1_prefix)
-                    (heading2_prefix)
-                    (heading3_prefix)
-                    (heading4_prefix)
-                    (heading5_prefix)
-                    (heading6_prefix)
-                ] @headline
-
-                (weak_paragraph_delimiter) @dash
-                (strong_paragraph_delimiter) @doubledash
-
-                ([(ranged_tag
-                    name: (tag_name) @_name
-                    (#eq? @_name "code")
-                )
-                (ranged_verbatim_tag
-                    name: (tag_name) @_name
-                    (#eq? @_name "code")
-                )] @codeblock (#offset! @codeblock 0 0 1 0))
-
-                (quote1_prefix) @quote
-            ]]
-        ),
-        headline_highlights = { "Headline" },
-        bullet_highlights = {
-            "@neorg.headings.1.prefix",
-            "@neorg.headings.2.prefix",
-            "@neorg.headings.3.prefix",
-            "@neorg.headings.4.prefix",
-            "@neorg.headings.5.prefix",
-            "@neorg.headings.6.prefix",
-        },
-        bullets = { "◉", "○", "✸", "✿" },
-        codeblock_highlight = "CodeBlock",
-        dash_highlight = "Dash",
-        dash_string = "-",
-        doubledash_highlight = "DoubleDash",
-        doubledash_string = "=",
-        quote_highlight = "Quote",
-        quote_string = "┃",
-        fat_headlines = true,
-        fat_headline_upper_string = "▃",
-        fat_headline_lower_string = "🬂",
-    },
-    org = {
-        query = parse_query_save(
-            "org",
-            [[
-                (headline (stars) @headline)
-
-                (
-                    (expr) @dash
-                    (#match? @dash "^-----+$")
-                )
-
-                (block
-                    name: (expr) @_name
-                    (#match? @_name "(SRC|src)")
-                ) @codeblock
-
-                (paragraph . (expr) @quote
-                    (#eq? @quote ">")
-                )
-            ]]
-        ),
-        headline_highlights = { "Headline" },
-        bullet_highlights = {
-            "@org.headline.level1",
-            "@org.headline.level2",
-            "@org.headline.level3",
-            "@org.headline.level4",
-            "@org.headline.level5",
-            "@org.headline.level6",
-            "@org.headline.level7",
-            "@org.headline.level8",
-        },
-        bullets = { "◉", "○", "✸", "✿" },
-        codeblock_highlight = "CodeBlock",
-        dash_highlight = "Dash",
-        dash_string = "-",
-        quote_highlight = "Quote",
-        quote_string = "┃",
-        fat_headlines = true,
-        fat_headline_upper_string = "▃",
-        fat_headline_lower_string = "🬂",
+    headline_highlights = {
+        "markdownH1",
+        "markdownH2",
+        "markdownH3",
+        "markdownH4",
+        "markdownH5",
+        "markdownH6",
     },
 }
 
@@ -246,8 +117,21 @@ local nvim_buf_set_extmark = function(...)
     pcall(vim.api.nvim_buf_set_extmark, ...)
 end
 
+local get_node_raw_text = function(node, bufnr)
+    if use_legacy_query then
+        return q.get_node_text(node, bufnr)
+    else
+        return vim.treesitter.get_node_text(node, bufnr)
+    end
+end
+
 M.refresh = function()
-    local c = M.config[vim.bo.filetype]
+    -- TODO: find a better way
+    if vim.bo.filetype ~= "markdown" then
+        return
+    end
+
+    local c = M.config
     local bufnr = vim.api.nvim_get_current_buf()
     vim.api.nvim_buf_clear_namespace(0, M.namespace, 0, -1)
 
@@ -261,131 +145,73 @@ M.refresh = function()
     local root = syntax_tree[1]:root()
     local win_view = vim.fn.winsaveview()
     local left_offset = win_view.leftcol
-    local width = vim.api.nvim_win_get_width(0)
+    local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())[1]
+    local width = wininfo.width - wininfo.textoff
     local last_fat_headline = -1
+    local capture = ''
 
     for _, match, metadata in c.query:iter_matches(root, bufnr) do
         for id, node in pairs(match) do
-            local capture = c.query.captures[id]
+            --prev_capture = capture
+            capture = c.query.captures[id]
             local start_row, start_column, end_row, end_column =
                 unpack(vim.tbl_extend("force", { node:range() }, (metadata[id] or {}).range or {}))
 
-            if capture == "headline" and c.headline_highlights then
-                -- vim.treesitter.query.get_node_text() is deprecated, use vim.treesitter.get_node_text() instead.
-                local get_text_function = use_legacy_query and q.get_node_text(node, bufnr)
-                    or vim.treesitter.get_node_text(node, bufnr)
-                local level = #vim.trim(get_text_function)
-                local hl_group = c.headline_highlights[math.min(level, #c.headline_highlights)]
-                local bullet_hl_group = c.bullet_highlights[math.min(level, #c.bullet_highlights)]
+            if capture == "headline1" then
+                -- top and bottom screen wide horizontal lines
 
-                local virt_text = {}
-                if c.bullets and #c.bullets > 0 then
-                    local bullet = c.bullets[((level - 1) % #c.bullets) + 1]
-                    virt_text[1] = { string.rep(" ", level - 1) .. bullet, { hl_group, bullet_hl_group } }
-                end
-
+                local screen_line = { { c.headline_dash_symbol:rep(width), c.headline_dash_highlight } }
                 nvim_buf_set_extmark(bufnr, M.namespace, start_row, 0, {
-                    end_col = 0,
-                    end_row = start_row + 1,
-                    hl_group = hl_group,
-                    virt_text = virt_text,
-                    virt_text_pos = "overlay",
-                    hl_eol = true,
+                    virt_lines_above = true,
+                    virt_lines = { screen_line },
+                })
+                nvim_buf_set_extmark(bufnr, M.namespace, start_row, 0, {
+                    virt_lines = { screen_line },
                 })
 
-                if c.fat_headlines then
-                    local reverse_hl_group = M.make_reverse_highlight(hl_group)
+            elseif capture == "headline2" then
+                -- bottom screen wide horizontal line
 
-                    local padding_above = { { c.fat_headline_upper_string:rep(width), reverse_hl_group } }
-                    if start_row > 0 then
-                        local line_above = vim.api.nvim_buf_get_lines(bufnr, start_row - 1, start_row, false)[1]
-                        if line_above == "" and start_row - 1 ~= last_fat_headline then
-                            nvim_buf_set_extmark(bufnr, M.namespace, start_row - 1, 0, {
-                                virt_text = padding_above,
-                                virt_text_pos = "overlay",
-                                virt_text_win_col = 0,
-                                hl_mode = "combine",
-                            })
-                        else
-                            nvim_buf_set_extmark(bufnr, M.namespace, start_row, 0, {
-                                virt_lines_above = true,
-                                virt_lines = { padding_above },
-                            })
-                        end
-                    end
+                local screen_line = { { c.headline_dash_symbol:rep(width), c.headline_dash_highlight } }
+                nvim_buf_set_extmark(bufnr, M.namespace, start_row, 0, {
+                    virt_lines = { screen_line },
+                })
 
-                    local padding_below = { { c.fat_headline_lower_string:rep(width), reverse_hl_group } }
-                    local line_below = vim.api.nvim_buf_get_lines(bufnr, start_row + 1, start_row + 2, false)[1]
-                    if line_below == "" then
-                        nvim_buf_set_extmark(bufnr, M.namespace, start_row + 1, 0, {
-                            virt_text = padding_below,
-                            virt_text_pos = "overlay",
-                            virt_text_win_col = 0,
-                            hl_mode = "combine",
-                        })
-                        last_fat_headline = start_row + 1
+            elseif capture == "1_heading_content" then
+
+                -- get level from name
+
+                local level = tonumber(string.sub(capture, 1, 1))
+                local text_width = end_column - start_column
+                local my_text = get_node_raw_text(node, bufnr)
+                if end_column <= width then -- perfect fit
+
+                    -- center header if H1
+
+                    if level == 1 then
+
+                        local reps = math.floor((width - text_width)/2)
+                        my_text = (" "):rep(reps) .. my_text .. (" "):rep(width - text_width - reps)
                     else
-                        nvim_buf_set_extmark(bufnr, M.namespace, start_row, 0, {
-                            virt_lines = { padding_below },
-                        })
+                        my_text = my_text .. (" "):rep(width - text_width)
                     end
-                end
-            end
 
-            if capture == "dash" and c.dash_highlight and c.dash_string then
+                    local virt_text = {{ my_text, c.headline_highlights[level] }}
+                    
+                    nvim_buf_set_extmark(bufnr, M.namespace, start_row, 0, {
+                        virt_text = virt_text,
+                        virt_text_pos = "overlay",
+                        virt_text_win_col = 0,
+                    })
+
+                end
+
+            elseif capture == "dash" then
                 nvim_buf_set_extmark(bufnr, M.namespace, start_row, 0, {
-                    virt_text = { { c.dash_string:rep(width), c.dash_highlight } },
+                    virt_text = { { c.dash_symbol:rep(width), c.dash_highlight } },
                     virt_text_pos = "overlay",
                     hl_mode = "combine",
                 })
-            end
-
-            if capture == "doubledash" and c.doubledash_highlight and c.doubledash_string then
-                nvim_buf_set_extmark(bufnr, M.namespace, start_row, 0, {
-                    virt_text = { { c.doubledash_string:rep(width), c.doubledash_highlight } },
-                    virt_text_pos = "overlay",
-                    hl_mode = "combine",
-                })
-            end
-
-            if capture == "codeblock" and c.codeblock_highlight then
-                nvim_buf_set_extmark(bufnr, M.namespace, start_row, 0, {
-                    end_col = 0,
-                    end_row = end_row,
-                    hl_group = c.codeblock_highlight,
-                    hl_eol = true,
-                })
-
-                local start_line = vim.api.nvim_buf_get_lines(bufnr, start_row, start_row + 1, false)[1]
-                local _, padding = start_line:find "^ +"
-                local codeblock_padding = math.max((padding or 0) - left_offset, 0)
-
-                if codeblock_padding > 0 then
-                    for i = start_row, end_row - 1 do
-                        nvim_buf_set_extmark(bufnr, M.namespace, i, 0, {
-                            virt_text = { { string.rep(" ", codeblock_padding), "Normal" } },
-                            virt_text_win_col = 0,
-                            priority = 1,
-                        })
-                    end
-                end
-            end
-
-            if capture == "quote" and c.quote_highlight and c.quote_string then
-                if vim.bo.filetype == "markdown" then
-                    local text = vim.api.nvim_buf_get_text(bufnr, start_row, start_column, end_row, end_column, {})[1]
-                    nvim_buf_set_extmark(bufnr, M.namespace, start_row, start_column, {
-                        virt_text = { { text:gsub(">", c.quote_string), c.quote_highlight } },
-                        virt_text_pos = "overlay",
-                        hl_mode = "combine",
-                    })
-                else
-                    nvim_buf_set_extmark(bufnr, M.namespace, start_row, start_column, {
-                        virt_text = { { c.quote_string, c.quote_highlight } },
-                        virt_text_pos = "overlay",
-                        hl_mode = "combine",
-                    })
-                end
             end
         end
     end
